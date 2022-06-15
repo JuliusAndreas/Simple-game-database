@@ -1,0 +1,333 @@
+CREATE TABLE Game (
+	GameID INTEGER PRIMARY KEY AUTOINCREMENT,
+	Title VARCHAR(255) NOT NULL,
+	ReleaseDate DATE,
+	FinishedDate DATE,
+	SerieLength INTEGER CHECK (SerieLength >= 1),
+	Score INTEGER CHECK(Score < 100),
+	POV VARCHAR(255) NOT NULL CHECK (POV == 'FPP' OR POV == 'TPP' OR POV == 'FPPTPP'),
+	MultiplayerCapability BOOLEAN,
+	CONSTRAINT CK_title UNIQUE(Title)
+);
+CREATE TABLE SequelOf(
+	SequelOfID INTEGER PRIMARY KEY AUTOINCREMENT,
+	SequelGameKey INT,
+	BeingSequeledGameKey INT,
+	CONSTRAINT FK_Sequel_Of FOREIGN KEY(SequelGameKey) REFERENCES Game(GameID),  
+	CONSTRAINT FK_Being_Sequeled FOREIGN KEY(BeingSequeledGameKey) REFERENCES Game(GameID),
+	CONSTRAINT CK_SequelOf UNIQUE(SequelGameKey,BeingSequeledGameKey)
+);
+CREATE TABLE OS(
+	OSID INTEGER PRIMARY KEY AUTOINCREMENT,
+	Name VARCHAR(255) NOT NULL,
+	CONSTRAINT CK_name UNIQUE(Name)
+);
+CREATE TABLE Platform(
+	PlatformID INTEGER PRIMARY KEY AUTOINCREMENT,
+	Name VARCHAR(255) NOT NULL,
+	CONSTRAINT CK_name UNIQUE(Name)
+);
+CREATE TABLE GamePlatform(
+	GamePlatformID INTEGER PRIMARY KEY AUTOINCREMENT,
+	GameKey INTEGER NOT NULL,
+	PlatformKey INTEGER NOT NULL,
+	CONSTRAINT FK_Game_ID FOREIGN KEY(GameKey) REFERENCES Game(GameID),
+	CONSTRAINT FK_Platform_ID FOREIGN KEY(PlatformKey) REFERENCES Platform(PlatformID)
+);
+CREATE TABLE GameOS(
+	GameOSID INTEGER PRIMARY KEY AUTOINCREMENT,
+	GameKey INTEGER NOT NULL,
+	OSKey INTEGER NOT NULL,
+	CONSTRAINT FK_Game_ID FOREIGN KEY(GameKey) REFERENCES Game(GameID),  
+	CONSTRAINT FK_OS_ID FOREIGN KEY(OSKey) REFERENCES OS(OSID)
+);
+CREATE TABLE Genre(
+	GenreID INTEGER PRIMARY KEY AUTOINCREMENT,
+	Title VARCHAR(255) NOT NULL,	
+	Score INTEGER CHECK(Score < 100),
+	CONSTRAINT CK_title UNIQUE(Title)
+);
+CREATE TABLE GameGenre(
+	GameGenreID INTEGER PRIMARY KEY AUTOINCREMENT,
+	GameKey INTEGER NOT NULL,
+	GenreKey INTEGER NOT NULL,
+	CONSTRAINT FK_Game_ID FOREIGN KEY(GameKey) REFERENCES Game(GameID), 
+	CONSTRAINT FK_Genre_ID FOREIGN KEY(GenreKey) REFERENCES Genre(GenreID)
+);
+CREATE TABLE Character(
+	CharacterID INTEGER PRIMARY KEY AUTOINCREMENT,
+	Name VARCHAR(255) NOT NULL,
+	Age INTEGER,
+	Playability BOOLEAN,
+	CONSTRAINT CK_name UNIQUE(Name)
+);
+CREATE TABLE GameCharacter(
+	GameCharacterID INTEGER PRIMARY KEY AUTOINCREMENT,
+	GameKey INTEGER NOT NULL,
+	CharacterKey INTEGER,
+	CONSTRAINT FK_Game_ID FOREIGN KEY(GameKey) REFERENCES Game(GameID),  
+	CONSTRAINT FK_Character_ID FOREIGN KEY(CharacterKey) REFERENCES Character(CharacterID)
+);
+CREATE TABLE Memory(
+	MemoryID INTEGER PRIMARY KEY AUTOINCREMENT,
+	Description VARCHAR(255) NOT NULL,
+	Date DATE,
+	GameKey INTEGER NOT NULL,	
+	CONSTRAINT FK_Game_ID FOREIGN KEY(GameKey) REFERENCES Game(GameID),
+	CONSTRAINT CK_description UNIQUE(Description)
+);
+CREATE TABLE Company(
+	CompanyID INTEGER PRIMARY KEY AUTOINCREMENT,
+	Name VARCHAR(255) NOT NULL,
+	NumberOfGamesMade INTEGER CHECK (NumberOfGamesMade != 0),
+	Country VARCHAR(255),
+	StockPrice DOUBLE,
+	FoundationDate DATE,
+	CONSTRAINT CK_name UNIQUE(Name)
+);
+CREATE TABLE Produce(
+	ProduceID INTEGER PRIMARY KEY AUTOINCREMENT,
+	GameKey INTEGER NOT NULL,
+	CompanyKey INTEGER NOT NULL,
+	CONSTRAINT FK_Game_ID FOREIGN KEY(GameKey) REFERENCES Game(GameID),  
+	CONSTRAINT FK_Company_ID FOREIGN KEY(CompanyKey) REFERENCES Company(CompanyID)
+);
+
+
+INSERT INTO Character(CharacterID, Name, Age, Playability ) values(1,'Hurk Drubman', null, false);
+INSERT INTO Character(CharacterID, Name, Age, Playability ) values(2,'Kratos', 150, true);
+INSERT INTO Character(CharacterID, Name, Age, Playability ) values(3,'Atreus', 12, false);
+INSERT INTO Character(CharacterID, Name, Age, Playability ) values(4,'Dale Vandermeer', null, true);
+INSERT INTO Character(CharacterID, Name, Age, Playability ) values(5,'Trevor Philips', 45, true);
+INSERT INTO Character(CharacterID, Name, Age, Playability ) values(6,'Luigi', 25, true);
+INSERT INTO Character(CharacterID, Name, Age, Playability ) values(7,'Leon S.Kennedy', 27, true);
+INSERT INTO Character(CharacterID, Name, Age, Playability ) values(8,'Dante', 19, true);
+INSERT INTO Character(CharacterID, Name, Age, Playability ) values(9,'Ori', 5, true);
+INSERT INTO Character(CharacterID, Name, Age, Playability ) values(10,'Joseph Seed', 44, false);
+insert into GameCharacter(GameCharacterID,GameKey,CharacterKey) values (1,1,1);
+insert into GameCharacter(GameCharacterID,GameKey,CharacterKey) values (2,10,2);
+insert into GameCharacter(GameCharacterID,GameKey,CharacterKey) values (3,10,3);
+insert into GameCharacter(GameCharacterID,GameKey,CharacterKey) values (4,3,4);
+insert into GameCharacter(GameCharacterID,GameKey,CharacterKey) values (5,8,5);
+insert into GameCharacter(GameCharacterID,GameKey,CharacterKey) values (6,9,6);
+insert into GameCharacter(GameCharacterID,GameKey,CharacterKey) values (7,2,7);
+insert into GameCharacter(GameCharacterID,GameKey,CharacterKey) values (8,6,8);
+insert into GameCharacter(GameCharacterID,GameKey,CharacterKey) values (9,5,9);
+insert into GameCharacter(GameCharacterID,GameKey,CharacterKey) values (10,1,10);
+INSERT INTO Game(GameID, Title, ReleaseDate, FinishedDate, Score, POV, MultiplayerCapability, SerieLength ) values(10,'God of War', "2018-04-20", null,null, 'TPP', FALSE,7);
+INSERT INTO Game(GameID, Title, ReleaseDate, FinishedDate, Score, POV, MultiplayerCapability, SerieLength ) values(9,'Super mario Bros', "1985-09-13", null,88, 'TPP', FALSE,21);
+INSERT INTO Game(GameID, Title, ReleaseDate, FinishedDate, Score, POV, MultiplayerCapability, SerieLength ) values(8,'GTA V', "2013-09-17", null,null, 'TPP', TRUE,7);
+INSERT INTO Game(GameID, Title, ReleaseDate, FinishedDate, Score, POV, MultiplayerCapability, SerieLength ) values(7,'Last day on earth', "2017-05-01", null,90, 'TPP', TRUE,1);
+INSERT INTO Game(GameID, Title, ReleaseDate, FinishedDate, Score, POV, MultiplayerCapability, SerieLength ) values(6,'Devil may cry 3', "2005-02-17", null,null, 'TPP', FALSE,5);
+INSERT INTO Game(GameID, Title, ReleaseDate, FinishedDate, Score, POV, MultiplayerCapability, SerieLength ) values(5,'Ori and the blind forest', "2015-03-11", "2019-12-13",77, 'TPP', FALSE,2);
+INSERT INTO Game(GameID, Title, ReleaseDate, FinishedDate, Score, POV, MultiplayerCapability, SerieLength ) values(4,'Call of Duty Warzone', "2020-03-10", null,null, 'FPP', TRUE,1);
+INSERT INTO Game(GameID, Title, ReleaseDate, FinishedDate, Score, POV, MultiplayerCapability, SerieLength ) values(3,'Cube escape: Paradox', "2018-09-20", "2019-01-21",95, 'FPP', FALSE,14);
+INSERT INTO Game(GameID, Title, ReleaseDate, FinishedDate, Score, POV, MultiplayerCapability, SerieLength ) values(2,'Resident Evil 4', "2005-01-11", "2020-05-10",69, 'TPP', FALSE,11);
+INSERT INTO Game(GameID, Title, ReleaseDate, FinishedDate, Score, POV, MultiplayerCapability, SerieLength ) values(1,'Far Cry 5', null, "2020-05-01", 76, 'FPP', TRUE,7);
+INSERT INTO Game(GameID, Title, ReleaseDate, FinishedDate, Score, POV, MultiplayerCapability, SerieLength ) values(14,'Far Cry 4', "2014-11-18", "2019-12-01", 89, 'FPP', TRUE,7);
+INSERT INTO Game(GameID, Title, ReleaseDate, FinishedDate, Score, POV, MultiplayerCapability, SerieLength ) values(11,'Pro Evolution Soccer 2017', "2016-09-13", null, 93, 'TPP', TRUE,20);
+INSERT INTO Game(GameID, Title, ReleaseDate, FinishedDate, Score, POV, MultiplayerCapability, SerieLength ) values(12,'Hitman Absolution', "2012-11-20", null, 92, 'TPP', TRUE,8);
+INSERT INTO Game(GameID, Title, ReleaseDate, FinishedDate, Score, POV, MultiplayerCapability, SerieLength )  values(13,'Assassins Creed 2', "2009-11-17", "2019-08-10", 92, 'TPP', FALSE,11);
+insert into Genre values(1,'Horror',60);
+insert into Genre values(2,'OpenWorld',90);
+insert into Genre values(3,'Strategic',83);
+insert into Genre values(4,'Platformer',65);
+insert into Genre values(5,'Survival',85);
+insert into Genre values(6,'Puzzle',89);
+insert into Genre values(7,'Stealth',91);
+insert into Genre values(8,'Role-Playing',89);
+insert into Genre values(9,'Sports',88);
+insert into Genre values(10,'Simulation',83);
+insert into Genre values(11,'Shooter',90);
+insert into GameGenre (GameGenreID,GameKey,GenreKey) values (1,1,2);
+insert into GameGenre (GameGenreID,GameKey,GenreKey) values (2,1,11);
+insert into GameGenre (GameGenreID,GameKey,GenreKey) values (3,2,1);
+insert into GameGenre (GameGenreID,GameKey,GenreKey) values (4,2,5);
+insert into GameGenre (GameGenreID,GameKey,GenreKey) values (5,2,11);
+insert into GameGenre (GameGenreID,GameKey,GenreKey) values (6,3,6);
+insert into GameGenre (GameGenreID,GameKey,GenreKey) values (7,4,11);
+insert into GameGenre (GameGenreID,GameKey,GenreKey) values (8,5,4);
+insert into GameGenre (GameGenreID,GameKey,GenreKey) values (9,7,3);
+insert into GameGenre (GameGenreID,GameKey,GenreKey) values (10,8,2);
+insert into GameGenre (GameGenreID,GameKey,GenreKey) values (11,8,11);
+insert into GameGenre (GameGenreID,GameKey,GenreKey) values (12,9,4);
+insert into GameGenre (GameGenreID,GameKey,GenreKey) values (13,11,9);
+insert into GameGenre (GameGenreID,GameKey,GenreKey) values (14,12,7);
+insert into GameGenre (GameGenreID,GameKey,GenreKey) values (15,12,11);
+insert into GameGenre (GameGenreID,GameKey,GenreKey) values (16,13,2);
+insert into GameGenre (GameGenreID,GameKey,GenreKey) values (17,13,7);
+insert into GameGenre (GameGenreID,GameKey,GenreKey) values (18,14,2);
+insert into GameGenre (GameGenreID,GameKey,GenreKey) values (19,14,11);
+insert into Company (CompanyID,Name,Numberofgamesmade,country,stockprice,foundationDate) values (1,'Ubisoft',null,'france',79.10,'1986-03-12');
+insert into Company (CompanyID,Name,Numberofgamesmade,country,stockprice,foundationDate) values (2,'Sony',null,'Japan',9.953,'1946-05-07');
+insert into Company (CompanyID,Name,Numberofgamesmade,country,stockprice,foundationDate) values (3,'Rockstar',33,'USA',null,'1998-12-01');
+insert into Company (CompanyID,Name,Numberofgamesmade,country,stockprice,foundationDate) values (4,'Square Enix',null,'Japan',6.150,'1975-09-29');
+insert into Company (CompanyID,Name,Numberofgamesmade,country,stockprice,foundationDate) values (5,'Naughty Dog',null,'USA',null,'1984-09-27');
+insert into Company (CompanyID,Name,Numberofgamesmade,country,stockprice,foundationDate) values (6, 'Capcom',null,'Japan',6.590,'1979-05-30');
+insert into Company (CompanyID,Name,Numberofgamesmade,country,stockprice,foundationDate) values (7,'Rusty Lake',14,'Netherlands',null,'2015-04-25');
+insert into Company (CompanyID,Name,Numberofgamesmade,country,stockprice,foundationDate) values (8,'Konami',100,'Japan',5.750,'1969-03-21');
+insert into Company (CompanyID,Name,Numberofgamesmade,country,stockprice,foundationDate) values (9,'Activision',51,'USA',90.96,'1979-10-01');
+insert into Company (CompanyID,Name,Numberofgamesmade,country,stockprice,foundationDate) values (10,'Xbox Game Studios',726,'USA',null,'2000-03-01');
+insert into Company (CompanyID,Name,Numberofgamesmade,country,stockprice,foundationDate) values (11,'Kefir',4,'Russia',null,'2009-01-01');
+
+insert into Produce(ProduceID, GameKey, CompanyKey) values (1,1,1);
+insert into Produce(ProduceID, GameKey, CompanyKey) values (2,8,3);
+insert into Produce(ProduceID, GameKey, CompanyKey) values (3,12,4);
+insert into Produce(ProduceID, GameKey, CompanyKey) values (4,14,1);
+insert into Produce(ProduceID, GameKey, CompanyKey) values (5,5,10);
+insert into Produce(ProduceID, GameKey, CompanyKey) values (6,4,9);
+insert into Produce(ProduceID, GameKey, CompanyKey) values (7,11,8);
+insert into Produce(ProduceID, GameKey, CompanyKey) values (8,7,11);
+insert into Produce(ProduceID, GameKey, CompanyKey) values (9,3,7);
+insert into Produce(ProduceID, GameKey, CompanyKey) values (10,6,6);
+insert into Produce(ProduceID, GameKey, CompanyKey) values (11,2,6);
+insert into Produce(ProduceID, GameKey, CompanyKey) values (12,13,1);
+
+insert into OS(OSID,Name) values (1,'Windows');
+insert into OS(OSID,Name) values (2,'Android');
+insert into OS(OSID,Name) values (3,'Linux');
+insert into OS(OSID,Name) values (4,'Orbis');
+insert into OS(OSID,Name) values (5,'Horizen');
+insert into OS(OSID,Name) values (6,'iOS');
+insert into OS(OSID,Name) values (7,'Java');
+insert into OS(OSID,Name) values (8,'OS Sierra');
+insert into OS(OSID,Name) values (9,'Symbian');
+insert into OS(OSID,Name) values (10,'Solaris');
+insert into OS(OSID,Name) values (11,'Macintosh');
+insert into Platform(PlatformID,Name) values (1,'PS4');
+insert into Platform(PlatformID,Name) values (2,'PC');
+insert into Platform(PlatformID,Name) values (3,'PS5');
+insert into Platform(PlatformID,Name) values (4,'Xbox 360');
+insert into Platform(PlatformID,Name) values (5,'Sega Mega Drive/Genesis');
+insert into Platform(PlatformID,Name) values (6,'Mobile');
+insert into Platform(PlatformID,Name) values (7,'PS3');
+insert into Platform(PlatformID,Name) values (8,'PS2');
+insert into Platform(PlatformID,Name) values (9,'PS1');
+insert into Platform(PlatformID,Name) values (10,'PSP');
+insert into Platform(PlatformID,Name) values (11,'Nintendo Switch');
+insert into Platform(PlatformID,Name) values (12,'Xbox One');
+insert into Platform(PlatformID,Name) values (13,'Xbox Series X');
+insert into GameOS(GameOSID, GameKey, OSKey) values (1,1,1);
+insert into GameOS(GameOSID, GameKey, OSKey) values (2,2,1);
+insert into GameOS(GameOSID, GameKey, OSKey) values (3,4,1);
+insert into GameOS(GameOSID, GameKey, OSKey) values (4,5,1);
+insert into GameOS(GameOSID, GameKey, OSKey) values (5,6,1);
+insert into GameOS(GameOSID, GameKey, OSKey) values (6,8,1);
+insert into GameOS(GameOSID, GameKey, OSKey) values (7,11,1);
+insert into GameOS(GameOSID, GameKey, OSKey) values (8,12,1);
+insert into GameOS(GameOSID, GameKey, OSKey) values (9,13,1);
+insert into GameOS(GameOSID, GameKey, OSKey) values (10,14,1);
+insert into GameOS(GameOSID, GameKey, OSKey) values (11,10,4);
+insert into GameOS(GameOSID, GameKey, OSKey) values (12,1,4);
+insert into GameOS(GameOSID, GameKey, OSKey) values (13,4,4);
+insert into GameOS(GameOSID, GameKey, OSKey) values (14,5,4);
+insert into GameOS(GameOSID, GameKey, OSKey) values (15,11,4);
+insert into GameOS(GameOSID, GameKey, OSKey) values (16,14,4);
+insert into GameOS(GameOSID, GameKey, OSKey) values (17,7,2);
+insert into GamePlatform(GamePlatformID, GameKey, PlatformKey) values (1,1,2);
+insert into GamePlatform(GamePlatformID, GameKey, PlatformKey) values (2,2,1);
+insert into GamePlatform(GamePlatformID, GameKey, PlatformKey) values (3,2,8);
+insert into GamePlatform(GamePlatformID, GameKey, PlatformKey) values (4,3,6);
+insert into GamePlatform(GamePlatformID, GameKey, PlatformKey) values (5,4,1);
+insert into GamePlatform(GamePlatformID, GameKey, PlatformKey) values (6,4,2);
+insert into GamePlatform(GamePlatformID, GameKey, PlatformKey) values (7,4,12);
+insert into GamePlatform(GamePlatformID, GameKey, PlatformKey) values (8,5,2);
+insert into GamePlatform(GamePlatformID, GameKey, PlatformKey) values (9,6,1);
+insert into GamePlatform(GamePlatformID, GameKey, PlatformKey) values (10,6,11);
+insert into GamePlatform(GamePlatformID, GameKey, PlatformKey) values (11,6,8);
+insert into GamePlatform(GamePlatformID, GameKey, PlatformKey) values (12,7,6);
+insert into GamePlatform(GamePlatformID, GameKey, PlatformKey) values (13,8,1);
+insert into GamePlatform(GamePlatformID, GameKey, PlatformKey) values (14,8,2);
+insert into GamePlatform(GamePlatformID, GameKey, PlatformKey) values (15,8,7);
+insert into GamePlatform(GamePlatformID, GameKey, PlatformKey) values (16,8,3);
+insert into GamePlatform(GamePlatformID, GameKey, PlatformKey) values (17,8,12);
+insert into GamePlatform(GamePlatformID, GameKey, PlatformKey) values (18,8,13);
+insert into GamePlatform(GamePlatformID, GameKey, PlatformKey) values (19,10,1);
+insert into GamePlatform(GamePlatformID, GameKey, PlatformKey) values (20,11,1);
+insert into GamePlatform(GamePlatformID, GameKey, PlatformKey) values (21,11,2);
+insert into GamePlatform(GamePlatformID, GameKey, PlatformKey) values (22,11,12);
+insert into GamePlatform(GamePlatformID, GameKey, PlatformKey) values (23,13,2);
+insert into GamePlatform(GamePlatformID, GameKey, PlatformKey) values (24,12,2);
+insert into GamePlatform(GamePlatformID, GameKey, PlatformKey) values (25,12,7);
+insert into GamePlatform(GamePlatformID, GameKey, PlatformKey) values (26,12,4);
+insert into GamePlatform(GamePlatformID, GameKey, PlatformKey) values (27,1,1);
+insert into GamePlatform(GamePlatformID, GameKey, PlatformKey) values (28,1,12);
+insert into GamePlatform(GamePlatformID, GameKey, PlatformKey) values (29,14,7);
+insert into GamePlatform(GamePlatformID, GameKey, PlatformKey) values (30,14,2);
+insert into GamePlatform(GamePlatformID, GameKey, PlatformKey) values (31,14,4);
+insert into GamePlatform(GamePlatformID, GameKey, PlatformKey) values (32,14,12);
+
+
+INSERT INTO Game(GameID, Title, ReleaseDate, FinishedDate, Score, POV, MultiplayerCapability, SerieLength ) values(10,'God of War', "2018-04-20", null,null, 'TPP', FALSE,7);
+INSERT INTO Game(GameID, Title, ReleaseDate, FinishedDate, Score, POV, MultiplayerCapability, SerieLength ) values(9,'Super mario Bros', "1985-09-13", null,88, 'TPP', FALSE,21);
+INSERT INTO Game(GameID, Title, ReleaseDate, FinishedDate, Score, POV, MultiplayerCapability, SerieLength ) values(8,'GTA V', "2013-09-17", null,null, 'TPP', TRUE,7);
+INSERT INTO Game(GameID, Title, ReleaseDate, FinishedDate, Score, POV, MultiplayerCapability, SerieLength ) values(7,'Last day on earth', "2017-05-01", null,90, 'TPP', TRUE,1);
+INSERT INTO Game(GameID, Title, ReleaseDate, FinishedDate, Score, POV, MultiplayerCapability, SerieLength ) values(6,'Devil may cry 3', "2005-02-17", null,null, 'TPP', FALSE,5);
+INSERT INTO Game(GameID, Title, ReleaseDate, FinishedDate, Score, POV, MultiplayerCapability, SerieLength ) values(5,'Ori and the blind forest', "2015-03-11", "2019-12-13",77, 'TPP', FALSE,2);
+INSERT INTO Game(GameID, Title, ReleaseDate, FinishedDate, Score, POV, MultiplayerCapability, SerieLength ) values(4,'Call of Duty Warzone', "2020-03-10", null,null, 'FPP', TRUE,1);
+INSERT INTO Game(GameID, Title, ReleaseDate, FinishedDate, Score, POV, MultiplayerCapability, SerieLength ) values(3,'Cube escape: Paradox', "2018-09-20", "2019-01-21",95, 'FPP', FALSE,14);
+INSERT INTO Game(GameID, Title, ReleaseDate, FinishedDate, Score, POV, MultiplayerCapability, SerieLength ) values(2,'Resident Evil 4', "2005-01-11", "2020-05-10",69, 'TPP', FALSE,11);
+INSERT INTO Game(GameID, Title, ReleaseDate, FinishedDate, Score, POV, MultiplayerCapability, SerieLength ) values(1,'Far Cry 5', null, "2020-05-01", 76, 'FPP', TRUE,7);
+INSERT INTO Game(GameID, Title, ReleaseDate, FinishedDate, Score, POV, MultiplayerCapability, SerieLength ) values(14,'Far Cry 4', "2014-11-18", "2019-12-01", 89, 'FPP', TRUE,7);
+INSERT INTO Game(GameID, Title, ReleaseDate, FinishedDate, Score, POV, MultiplayerCapability, SerieLength ) values(11,'Pro Evolution Soccer 2017', "2016-09-13", null, 93, 'TPP', TRUE,20);
+INSERT INTO Game(GameID, Title, ReleaseDate, FinishedDate, Score, POV, MultiplayerCapability, SerieLength ) values(12,'Hitman Absolution', "2012-11-20", null, 92, 'TPP', TRUE,8);
+INSERT INTO Game(GameID, Title, ReleaseDate, FinishedDate, Score, POV, MultiplayerCapability, SerieLength )  values(13,'Assassins Creed 2', "2009-11-17", "2019-08-10", 92, 'TPP', FALSE,11);
+INSERT INTO Game(GameID, Title, ReleaseDate, FinishedDate, Score, POV, MultiplayerCapability, SerieLength )  values(14,'Resident Evil 7', "2009-11-17", "2019-08-10", 92, 'TPP', FALSE,11);
+insert into GamePlatform(GamePlatformID, GameKey, PlatformKey) values (1,1,2);
+insert into Memory(MemoryID,Description,Date,GameKey) values(1,'Blowing the car by thowing the helicopter','2020-04-04',1);
+insert into Memory(MemoryID,Description,Date,GameKey) values(2,'Defeating boss by one shot','2020-05-07',2);
+insert into Memory(MemoryID,Description,Date,GameKey) values(3,'Burning the plain pilot by incendiary arrow from the ground','2020-06-17',1);
+insert into Memory(MemoryID,Description,Date,GameKey) values(4,'Gaining access to crooked creek farm','2020-11-11',7);
+insert into Memory(MemoryID,Description,Date,GameKey) values(5,'Winning 15-1 against Inter Milan','2020-05-28',11);
+insert into Memory(MemoryID,Description,Date,GameKey) values(6,'Escaping a heavily guarded town without using a disguise while staying undetected','2020-04-07',12);
+insert into Memory(MemoryID,Description,Date,GameKey) values(7,'Two Enemy choppers Colliding and being destroyed','2019-10-01',14);
+insert into Memory(MemoryID,Description,Date,GameKey) values(8,'Fighting a yeti by knife','2019-11-07',14);
+insert into Memory(MemoryID,Description,Date,GameKey) values(9,'Innovative method for ambushing','2019-10-07',14);
+insert into Memory(MemoryID,Description,Date,GameKey) values(10,'First Confrontation with the Yetis','2019-10-17',14);
+
+
+
+
+
+queries:
+top 10 best:
+	select * from Game Order By Score DESC LIMIT 10;
+
+
+top 10 worst:
+	select * from Game Order By Score ASC LIMIT 10;	
+
+same year:
+	select * from Game WHERE finishedDate LIKE '%YYYY%';
+same month:
+	select * from Game WHERE finishedDate LIKE '%-MM-%';
+	
+platform with most games:
+	select Name,PlatformID,COUNT(*) as count from Platform,GamePlatform Group By PlatformID,PlatformKey Order By count DESC Limit 1;
+
+OS with most games:
+	select Name,OSID,COUNT(*) as count from OS,GameOS Group By OSID,OSKey Order By count DESC Limit 1;
+
+characters of best game:
+	select Name,CharacterID from Character,GameCharacter WHERE CharacterID = CharacterKey AND GameKey = (select GameID from Game Order By Score DESC LIMIT 1);
+
+top 10 best genres:
+	select * from Genre Order By Score DESC LIMIT 10;	
+
+top 10 best companies based on best games:
+	select CompanyID,Name,Score from Company INNER join Produce ON CompanyID = CompanyKey INNER join Game ON GameID = GameKey Order by score DESC LIMIT 10;
+
+most memorable games:
+	select DISTINCT GameKey,Title,Count(Description) as count from Game INNER JOIN Memory ON GameID = GameKey Group By GameID Order By count DESC LIMIT 10;
+
+most memorable genres:
+	select DISTINCT Title,GenreID,Count(Description) as count from Genre INNER JOIN GameGenre ON GenreID = GenreKey INNER JOIN Memory ON Memory.GameKey = GameGenre.GameKey Group By GameGenre.GameKey Order By count DESC LIMIT 10;
+
+longest series:
+	select * from Game Order By serieLength DESC LIMIT 10;
+
+top ten Games with most NPCs:
+	select GameID,Title, count(*) as count from Game INNER Join GameCharacter ON GameID = GameKey Inner join Character On CharacterKey = CharacterID AND Playability = FALSE Group by GameID Order by count DESC LIMIT 10;
+
+
+
